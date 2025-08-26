@@ -1,14 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from "@nestjs/testing";
 import {
   INestApplication,
   ValidationPipe,
   NotFoundException,
-} from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { ProductService } from '../src/product/product.service';
-import { Product } from '@prisma/client';
-import { PrismaClient } from '@prisma/client';
+} from "@nestjs/common";
+import * as request from "supertest";
+import { AppModule } from "../src/app.module";
+import { ProductService } from "../src/product/product.service";
+import { Product } from "@prisma/client";
 
 const mockProductService = {
   product: jest.fn(),
@@ -21,20 +20,19 @@ const generateMockProduct = (
   overrides: Partial<Product> = {},
 ): Product => ({
   id,
-  name: 'Test Product',
-  descriptionLong: 'This is a long description for the test product.',
-  descriptionShort: 'Short desc.',
+  name: "Test Product",
+  descriptionLong: "This is a long description for the test product.",
+  descriptionShort: "Short desc.",
   price: 99.99,
-  productCategory: 'ELECTRONICS',
-  productType: 'LAPTOP',
+  productCategory: "ELECTRONICS",
+  productType: "LAPTOP",
   createdAt: new Date(),
   updatedAt: new Date(),
   ...overrides,
 });
 
-describe('ProductController (e2e)', () => {
+describe("ProductController (e2e)", () => {
   let app: INestApplication;
-  let prisma: PrismaClient;
 
   beforeAll(async () => {});
 
@@ -59,19 +57,19 @@ describe('ProductController (e2e)', () => {
     await app.close();
   });
 
-  const productId = 'clxko7ixk0000sjoyf9lw5x7x';
+  const productId = "clxko7ixk0000sjoyf9lw5x7x";
   const productData = {
-    name: 'Awesome Gadget',
+    name: "Awesome Gadget",
     description:
-      'The most awesome gadget you have ever seen. It does amazing things and will change your life for the better. Buy it now!',
+      "The most awesome gadget you have ever seen. It does amazing things and will change your life for the better. Buy it now!",
     price: 199.99,
-    imageUrl: 'https://example.com/awesome-gadget.png',
-    productCategory: 'GADGETS',
-    productType: 'ELECTRONIC',
+    imageUrl: "https://example.com/awesome-gadget.png",
+    productCategory: "GADGETS",
+    productType: "ELECTRONIC",
   };
 
-  describe('GET /products/:id', () => {
-    it('should return a product if found', async () => {
+  describe("GET /products/:id", () => {
+    it("should return a product if found", async () => {
       const mockProduct = generateMockProduct(productId);
       mockProductService.product.mockResolvedValue(mockProduct);
 
@@ -89,13 +87,14 @@ describe('ProductController (e2e)', () => {
       });
     });
 
-    it('should return 404 if product not found', async () => {
+    it("should return 404 if product not found", async () => {
       mockProductService.product.mockResolvedValue(null);
 
       await request(app.getHttpServer())
         .get(`/products/${productId}`)
         .expect(404)
         .then((response) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           expect(response.body.message).toEqual(
             `Product with ID ${productId} not found`,
           );
@@ -107,13 +106,13 @@ describe('ProductController (e2e)', () => {
     });
   });
 
-  describe('POST /products', () => {
-    it('should create and return a new product', async () => {
+  describe("POST /products", () => {
+    it("should create and return a new product", async () => {
       const createdProduct = generateMockProduct(productId, {
         name: productData.name,
         descriptionLong: productData.description,
         descriptionShort:
-          'The most awesome gadget you have ever seen. It does amazing thin...',
+          "The most awesome gadget you have ever seen. It does amazing thin...",
         price: productData.price,
         productCategory: productData.productCategory,
         productType: productData.productType,
@@ -121,7 +120,7 @@ describe('ProductController (e2e)', () => {
       mockProductService.createProduct.mockResolvedValue(createdProduct);
 
       const response = await request(app.getHttpServer())
-        .post('/products')
+        .post("/products")
         .send(productData)
         .expect(201);
 
@@ -142,8 +141,8 @@ describe('ProductController (e2e)', () => {
     });
   });
 
-  describe('DELETE /products/:id', () => {
-    it('should delete a product and return it', async () => {
+  describe("DELETE /products/:id", () => {
+    it("should delete a product and return it", async () => {
       const mockDeletedProduct = generateMockProduct(productId);
       mockProductService.deleteProduct.mockResolvedValue(mockDeletedProduct);
 
@@ -161,7 +160,7 @@ describe('ProductController (e2e)', () => {
       });
     });
 
-    it('should return 404 if product to delete is not found (if service throws)', async () => {
+    it("should return 404 if product to delete is not found (if service throws)", async () => {
       mockProductService.deleteProduct.mockImplementation(() => {
         throw new NotFoundException(
           `Product with ID ${productId} not found for deletion.`,
@@ -172,6 +171,7 @@ describe('ProductController (e2e)', () => {
         .delete(`/products/${productId}`)
         .expect(404)
         .then((response) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           expect(response.body.message).toEqual(
             `Product with ID ${productId} not found for deletion.`,
           );
