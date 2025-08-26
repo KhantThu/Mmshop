@@ -6,10 +6,10 @@ import {
   Body,
   Param,
   NotFoundException,
-} from '@nestjs/common';
-import { ProductService } from './product.service';
-import { Product } from '@prisma/client';
-import { truncateDescription } from './product.helper';
+} from "@nestjs/common";
+import { ProductService } from "./product.service";
+import { Product } from "@prisma/client";
+import { truncateDescription } from "./product.helper";
 
 type InputData = {
   name: string;
@@ -20,12 +20,12 @@ type InputData = {
   productType: string;
 };
 
-@Controller('products')
+@Controller("products")
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get(':id')
-  async getProduct(@Param('id') id: string): Promise<Product> {
+  @Get(":id")
+  async getProduct(@Param("id") id: string): Promise<Product> {
     const product = await this.productService.product({ id });
 
     if (!product) {
@@ -48,8 +48,8 @@ export class ProductController {
     });
   }
 
-  @Delete(':id')
-  async deleteProduct(@Param('id') id: string): Promise<Product> {
+  @Delete(":id")
+  async deleteProduct(@Param("id") id: string): Promise<Product> {
     return this.productService.deleteProduct({ id });
   }
 }

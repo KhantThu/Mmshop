@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class AppService {
   getAppStatus() {
     return {
       up: true,
+      ready: true,
+      message: 'App is running',
     };
   }
-}  
+}
